@@ -50,12 +50,12 @@ export default function PDFReader({ session, currentBook, setCurrentBook, member
     }
   })
 
-  // Save current page to localStorage whenever it changes
+  // Save current page to localStorage whenever it changes (only after PDF is loaded)
   useEffect(() => {
-    if (currentBook?.id && currentPage > 0) {
+    if (currentBook?.id && currentPage > 0 && pdfDoc) {
       localStorage.setItem(`folio_page_${currentBook.id}`, currentPage.toString())
     }
-  }, [currentBook?.id, currentPage])
+  }, [currentBook?.id, currentPage, pdfDoc])
 
   const loadPdf = async () => {
     try {
