@@ -583,6 +583,46 @@ textarea.fi {
   padding: 6px 12px;
 }
 
+.filter-tabs {
+  display: flex;
+  border-bottom: 1.5px solid var(--border);
+}
+
+.filter-tab {
+  flex: 1;
+  padding: 10px 8px;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1.5px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.filter-tab:hover {
+  color: var(--text);
+}
+
+.filter-tab.active {
+  color: var(--green);
+  border-bottom-color: var(--green);
+}
+
+.filter-count {
+  font-size: 11px;
+  background-color: var(--green-light);
+  color: var(--green);
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+
 .panel-content {
   flex: 1;
   overflow-y: auto;

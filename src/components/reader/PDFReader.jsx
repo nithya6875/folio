@@ -203,16 +203,6 @@ export default function PDFReader({ session, currentBook, setCurrentBook, member
     return acc
   }, {})
 
-  // Filter annotations for current page
-  const currentPageAnnotations = annotations.filter(a =>
-    a.page_number === currentPage &&
-    (!a.is_whisper || a.member_name === session.memberName)
-  )
-
-  const otherAnnotations = annotations.filter(a =>
-    a.page_number !== currentPage &&
-    (!a.is_whisper || a.member_name === session.memberName)
-  )
 
   if (!currentBook) {
     return (
@@ -309,8 +299,8 @@ export default function PDFReader({ session, currentBook, setCurrentBook, member
 
       <AnnotationPanel
         open={panelOpen}
-        currentPageAnnotations={currentPageAnnotations}
-        otherAnnotations={otherAnnotations}
+        annotations={annotations}
+        currentPage={currentPage}
         myName={session.memberName}
         onAddNote={() => setAnnotationForm({
           type: 'note',
