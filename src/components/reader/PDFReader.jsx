@@ -50,6 +50,13 @@ export default function PDFReader({ session, currentBook, setCurrentBook, member
     }
   })
 
+  // Save current page to localStorage whenever it changes
+  useEffect(() => {
+    if (currentBook?.id && currentPage > 0) {
+      localStorage.setItem(`folio_page_${currentBook.id}`, currentPage.toString())
+    }
+  }, [currentBook?.id, currentPage])
+
   const loadPdf = async () => {
     try {
       const signedUrl = await getSignedPdfUrl(currentBook.pdf_path)
@@ -57,7 +64,19 @@ export default function PDFReader({ session, currentBook, setCurrentBook, member
       const pdf = await loadingTask.promise
       setPdfDoc(pdf)
       setTotalPages(pdf.numPages)
-      setCurrentPage(1)
+
+      // Restore saved page from localStorage
+      const savedPage = localStorage.getItem(`folio_page_${currentBook.id}`)
+      if (savedPage) {
+        const page = parseInt(savedPage, 10)
+        if (page >= 1 && page <= pdf.numPages) {
+          setCurrentPage(page)
+        } else {
+          setCurrentPage(1)
+        }
+      } else {
+        setCurrentPage(1)
+      }
     } catch (err) {
       console.error('Failed to load PDF:', err)
     }
