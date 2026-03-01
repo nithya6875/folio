@@ -129,11 +129,18 @@ export default function PDFReader({ session, currentBook, setCurrentBook, member
         })
         .eq('id', book.id)
 
+      // Reset all members' progress to page 1 for the new book
+      await supabase
+        .from('members')
+        .update({ current_page: 1 })
+        .eq('club_id', session.clubId)
+
       setCurrentBook({
         ...book,
         pdf_path: path,
         total_pages: pdf.numPages
       })
+      setCurrentPage(1)
     } catch (err) {
       console.error('Upload failed:', err)
       alert('Failed to upload PDF: ' + err.message)

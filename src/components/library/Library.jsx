@@ -166,6 +166,12 @@ export default function Library({ session, currentBook, setCurrentBook, onBookCo
       })
       .eq('id', currentBook.id)
 
+    // Reset all members' progress to page 1 for next book
+    await supabase
+      .from('members')
+      .update({ current_page: 1 })
+      .eq('club_id', session.clubId)
+
     // Clear localStorage caches for this book
     localStorage.removeItem(`guide_${currentBook.id}`)
     localStorage.removeItem(`characters_${currentBook.id}`)
