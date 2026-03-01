@@ -202,9 +202,9 @@ export default function PaceCoach({ session, currentBook, members }) {
                   <span className="pace-member-name">{member.name}</span>
                 </div>
                 <span className={`pace-status ${status}`}>
-                  {status === 'on-track' && '&#128994; On track'}
-                  {status === 'behind' && '&#128993; Falling behind'}
-                  {status === 'at-risk' && '&#128308; At risk'}
+                  {status === 'on-track' && 'On track'}
+                  {status === 'behind' && 'Falling behind'}
+                  {status === 'at-risk' && 'At risk'}
                 </span>
               </div>
 
