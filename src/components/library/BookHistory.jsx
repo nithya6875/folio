@@ -68,16 +68,9 @@ export default function BookHistory({ history }) {
             <div className="modal-body">
               {selectedBook.capsule ? (
                 <div>
-                  <p className="mb-4">{selectedBook.capsule.summary}</p>
-
-                  {selectedBook.capsule.verdict && (
-                    <div className="capsule-verdict" style={{ marginTop: '20px' }}>
-                      {selectedBook.capsule.verdict}
-                    </div>
-                  )}
-
+                  {/* Stats */}
                   {selectedBook.capsule.stats && (
-                    <div className="capsule-stats" style={{ marginTop: '20px' }}>
+                    <div className="capsule-stats" style={{ marginBottom: '20px' }}>
                       <div className="capsule-stat">
                         <div className="capsule-stat-value">
                           {selectedBook.capsule.stats.totalAnnotations}
@@ -90,13 +83,48 @@ export default function BookHistory({ history }) {
                         </div>
                         <div className="capsule-stat-label">Messages</div>
                       </div>
+                      <div className="capsule-stat">
+                        <div className="capsule-stat-value">
+                          {selectedBook.capsule.stats.totalPages || '?'}
+                        </div>
+                        <div className="capsule-stat-label">Pages</div>
+                      </div>
+                      <div className="capsule-stat">
+                        <div className="capsule-stat-value">
+                          p{selectedBook.capsule.stats.mostAnnotatedPage || '?'}
+                        </div>
+                        <div className="capsule-stat-label">Hot Page</div>
+                      </div>
                     </div>
                   )}
+
+                  {/* Generated capsule content */}
+                  {selectedBook.capsule.capsule?.summary && (
+                    <p className="mb-4">{selectedBook.capsule.capsule.summary}</p>
+                  )}
+
+                  {selectedBook.capsule.capsule?.verdict && (
+                    <div className="capsule-verdict" style={{ marginTop: '20px' }}>
+                      "{selectedBook.capsule.capsule.verdict}"
+                    </div>
+                  )}
+
+                  {/* Archived insights info */}
+                  <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>
+                    <p className="text-muted" style={{ fontSize: '13px', textAlign: 'center' }}>
+                      {selectedBook.capsule.guide ? '+ Discussion Guide' : ''}
+                      {selectedBook.capsule.guide && selectedBook.capsule.characters ? ' | ' : ''}
+                      {selectedBook.capsule.characters ? '+ Character Map' : ''}
+                    </p>
+                    <p className="text-muted" style={{ fontSize: '12px', textAlign: 'center', marginTop: '8px' }}>
+                      View full insights in Insights &rarr; Archive
+                    </p>
+                  </div>
                 </div>
               ) : (
                 <div className="empty-state">
                   <p className="text-muted">
-                    No capsule generated for this book.
+                    No insights archived for this book.
                   </p>
                 </div>
               )}

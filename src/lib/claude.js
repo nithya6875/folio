@@ -1,43 +1,38 @@
-// Gemini API helper (free tier)
+// Groq API helper (free tier - very fast)
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY
 
 export async function claudeCall(systemPrompt, userPrompt, options = {}) {
-  if (!GEMINI_API_KEY) {
-    console.warn('Missing VITE_GEMINI_API_KEY. AI features will not work.')
-    throw new Error('API key not configured')
+  if (!GROQ_API_KEY) {
+    console.warn('Missing VITE_GROQ_API_KEY. AI features will not work.')
+    throw new Error('API key not configured. Add VITE_GROQ_API_KEY to your .env file.')
   }
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${GEMINI_API_KEY}`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              { text: `${systemPrompt}\n\n${userPrompt}` }
-            ]
-          }
-        ],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 4096,
-        }
-      })
-    }
-  )
+  const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${GROQ_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
+      temperature: 0.7,
+      max_tokens: 4096
+    })
+  })
 
   if (!response.ok) {
     const error = await response.json()
-    throw new Error(error.error?.message || 'Gemini API error')
+    console.error('Groq API error:', error)
+    throw new Error(error.error?.message || 'Groq API error')
   }
 
   const data = await response.json()
-  return data.candidates[0].content.parts[0].text
+  return data.choices[0].message.content
 }
 
 // Parse JSON from AI response (handles markdown code blocks)

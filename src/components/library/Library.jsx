@@ -81,19 +81,75 @@ export default function Library({ session, currentBook, setCurrentBook, onBookCo
     if (!currentBook) return
 
     const confirmed = window.confirm(
-      `Mark "${currentBook.title}" as complete? This will generate an end-of-book capsule.`
+      `Mark "${currentBook.title}" as complete? This will archive all insights and discussions.`
     )
 
     if (!confirmed) return
 
-    // Move to history
+    // Gather all cached insights from localStorage
+    const cachedGuide = localStorage.getItem(`guide_${currentBook.id}`)
+    const cachedCharacters = localStorage.getItem(`characters_${currentBook.id}`)
+
+    let guide = null
+    let characters = null
+    let capsule = null
+
+    try {
+      if (cachedGuide) guide = JSON.parse(cachedGuide)
+      if (cachedCharacters) characters = JSON.parse(cachedCharacters)
+    } catch {
+      // Invalid cache, ignore
+    }
+
+    // Fetch annotations and messages for stats
+    const [annotationsRes, messagesRes] = await Promise.all([
+      supabase
+        .from('annotations')
+        .select('*')
+        .eq('book_id', currentBook.id)
+        .eq('is_whisper', false),
+      supabase
+        .from('messages')
+        .select('*')
+        .eq('club_id', session.clubId)
+    ])
+
+    const annotations = annotationsRes.data || []
+    const messages = messagesRes.data || []
+
+    // Calculate most annotated page
+    const pageCount = {}
+    annotations.forEach(a => {
+      pageCount[a.page_number] = (pageCount[a.page_number] || 0) + 1
+    })
+    const mostAnnotatedPage = Object.keys(pageCount).length > 0
+      ? Object.entries(pageCount).sort((a, b) => b[1] - a[1])[0][0]
+      : 1
+
+    // Build archived insights object
+    const archivedInsights = {
+      guide,
+      characters,
+      capsule,
+      stats: {
+        totalAnnotations: annotations.length,
+        totalMessages: messages.length,
+        mostAnnotatedPage: parseInt(mostAnnotatedPage),
+        totalPages: currentBook.total_pages
+      },
+      annotations: annotations.slice(0, 50), // Keep top 50 for reference
+      archivedAt: new Date().toISOString()
+    }
+
+    // Move to history with all insights
     const { error: historyError } = await supabase
       .from('book_history')
       .insert({
         club_id: session.clubId,
         title: currentBook.title,
         author: currentBook.author,
-        completed_at: new Date().toISOString()
+        completed_at: new Date().toISOString(),
+        capsule: archivedInsights
       })
 
     if (historyError) {
@@ -109,6 +165,11 @@ export default function Library({ session, currentBook, setCurrentBook, onBookCo
         completed_at: new Date().toISOString()
       })
       .eq('id', currentBook.id)
+
+    // Clear localStorage caches for this book
+    localStorage.removeItem(`guide_${currentBook.id}`)
+    localStorage.removeItem(`characters_${currentBook.id}`)
+    localStorage.removeItem(`folio_page_${currentBook.id}`)
 
     // Refresh data
     fetchData()

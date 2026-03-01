@@ -1,20 +1,49 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { supabase } from '../../lib/supabase'
 import DiscussionGuide from './DiscussionGuide'
 import CharacterGraph from './CharacterGraph'
 import PaceCoach from './PaceCoach'
 import BookCapsule from './BookCapsule'
+import ArchivedInsights from './ArchivedInsights'
 
 const NAV_ITEMS = [
   { id: 'guide', label: 'Discussion Guide', icon: '&#128172;' },
   { id: 'characters', label: 'Characters', icon: '&#128101;' },
   { id: 'progress', label: 'Progress', icon: '&#128200;' },
-  { id: 'capsule', label: 'Book Capsule', icon: '&#127942;' }
+  { id: 'capsule', label: 'Book Capsule', icon: '&#127942;' },
+  { id: 'archive', label: 'Archive', icon: '&#128218;' }
 ]
 
 export default function Insights({ session, currentBook, members }) {
   const [activeSection, setActiveSection] = useState('guide')
+  const [bookHistory, setBookHistory] = useState([])
+
+  useEffect(() => {
+    fetchBookHistory()
+  }, [session.clubId])
+
+  const fetchBookHistory = async () => {
+    const { data } = await supabase
+      .from('book_history')
+      .select('*')
+      .eq('club_id', session.clubId)
+      .order('completed_at', { ascending: false })
+
+    if (data) {
+      setBookHistory(data)
+    }
+  }
 
   const renderSection = () => {
+    // Archive is always accessible
+    if (activeSection === 'archive') {
+      return (
+        <ArchivedInsights
+          bookHistory={bookHistory}
+        />
+      )
+    }
+
     if (!currentBook) {
       return (
         <div className="empty-state" style={{ height: '100%' }}>
