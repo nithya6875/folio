@@ -103,7 +103,7 @@ export default function PaceCoach({ session, currentBook, members }) {
         <span style={{ fontSize: '24px' }}>📅</span>
         <div style={{ flex: 1 }}>
           <p style={{ fontWeight: 600, marginBottom: '4px' }}>Next Meeting</p>
-          {editingDate || !meetingDate ? (
+          {session.isAdmin && (editingDate || !meetingDate) ? (
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
               <input
                 type="date"
@@ -121,7 +121,7 @@ export default function PaceCoach({ session, currentBook, members }) {
                 </button>
               )}
             </div>
-          ) : (
+          ) : meetingDate ? (
             <p className="text-muted">
               {new Date(meetingDate).toLocaleDateString('en-US', {
                 weekday: 'long',
@@ -145,6 +145,10 @@ export default function PaceCoach({ session, currentBook, members }) {
                   Edit
                 </button>
               )}
+            </p>
+          ) : (
+            <p className="text-muted">
+              Not set yet — waiting for admin to schedule
             </p>
           )}
         </div>
