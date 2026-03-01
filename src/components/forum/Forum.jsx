@@ -27,7 +27,11 @@ export default function Forum({ session }) {
   // Realtime messages
   const handleNewMessage = useCallback((message) => {
     if (message.channel_id === activeChannel?.id) {
-      setMessages(prev => [...prev, message])
+      setMessages(prev => {
+        // Avoid duplicates if we already added it optimistically
+        if (prev.some(m => m.id === message.id)) return prev
+        return [...prev, message]
+      })
     }
   }, [activeChannel?.id])
 
@@ -88,11 +92,14 @@ export default function Forum({ session }) {
       reactions: {}
     }
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('messages')
       .insert(message)
+      .select()
+      .single()
 
-    if (!error) {
+    if (!error && data) {
+      setMessages(prev => [...prev, data])
       setReplyTo(null)
     }
   }
