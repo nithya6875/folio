@@ -100,7 +100,7 @@ export default function PaceCoach({ session, currentBook, members }) {
 
       {/* Meeting Date */}
       <div className="card mb-4" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-        <span style={{ fontSize: '24px' }}>&#128197;</span>
+        <span style={{ fontSize: '24px' }}>📅</span>
         <div style={{ flex: 1 }}>
           <p style={{ fontWeight: 600, marginBottom: '4px' }}>Next Meeting</p>
           {editingDate || !meetingDate ? (
@@ -157,11 +157,11 @@ export default function PaceCoach({ session, currentBook, members }) {
           <div className="pace-stat-label">Average Progress</div>
         </div>
         <div className="pace-stat">
-          <div className="pace-stat-value">&#127942;</div>
+          <div className="pace-stat-value">🏆</div>
           <div className="pace-stat-label">{furthestAhead?.name || 'N/A'}</div>
         </div>
         <div className="pace-stat">
-          <div className="pace-stat-value">&#128517;</div>
+          <div className="pace-stat-value">😅</div>
           <div className="pace-stat-label">{mostBehind?.name || 'N/A'}</div>
         </div>
         <div className="pace-stat">
@@ -177,7 +177,7 @@ export default function PaceCoach({ session, currentBook, members }) {
           onClick={handleGenerateNudges}
           disabled={loading || !meetingDate}
         >
-          {loading ? 'Generating...' : '&#10024; Generate Encouragement'}
+          {loading ? 'Generating...' : '✨ Generate Encouragement'}
         </button>
       </div>
 

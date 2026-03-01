@@ -215,7 +215,7 @@ export default function PDFReader({ session, currentBook, setCurrentBook, member
     return (
       <div className="reader-container">
         <div className="empty-state" style={{ flex: 1 }}>
-          <div className="empty-icon">&#128367;</div>
+          <div className="empty-icon">🗏</div>
           <h2 className="empty-title">
             {session.isAdmin ? 'Upload a book to get started' : 'No book yet'}
           </h2>

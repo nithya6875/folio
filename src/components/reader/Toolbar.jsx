@@ -50,7 +50,7 @@ export default function Toolbar({
           disabled={currentPage <= 1}
           title="Previous page"
         >
-          &#8592;
+          ←
         </button>
 
         <form onSubmit={handlePageSubmit} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -71,7 +71,7 @@ export default function Toolbar({
           disabled={currentPage >= totalPages}
           title="Next page"
         >
-          &#8594;
+          →
         </button>
       </div>
 
@@ -82,7 +82,7 @@ export default function Toolbar({
           disabled={zoom <= 0.5}
           title="Zoom out"
         >
-          &#8722;
+          −
         </button>
 
         <span className="zoom-display" onClick={resetZoom} style={{ cursor: 'pointer' }}>
@@ -95,7 +95,7 @@ export default function Toolbar({
           disabled={zoom >= 3}
           title="Zoom in"
         >
-          &#43;
+          +
         </button>
 
         <span className="book-title" title={bookTitle}>
@@ -109,12 +109,12 @@ export default function Toolbar({
           onClick={onHeatmapToggle}
           title="Toggle heatmap"
         >
-          &#128293;
+          🔥
         </button>
 
         {isAdmin && (
           <label className="toolbar-btn" title="Replace PDF" style={{ cursor: 'pointer' }}>
-            &#8635;
+            ↻
             <input
               type="file"
               accept=".pdf"
@@ -129,7 +129,7 @@ export default function Toolbar({
           onClick={onPanelToggle}
           title="Toggle annotation panel"
         >
-          &#9776;
+          ☰
         </button>
       </div>
     </div>

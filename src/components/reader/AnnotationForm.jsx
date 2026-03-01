@@ -56,7 +56,7 @@ export default function AnnotationForm({ initialType, selectedText, page, onSave
 
             {type === 'whisper' && (
               <p className="text-muted mb-3" style={{ fontSize: '13px' }}>
-                &#129323; Whispers are private — only you can see them.
+                🤫 Whispers are private — only you can see them.
               </p>
             )}
 

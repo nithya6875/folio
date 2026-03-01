@@ -182,7 +182,7 @@ export default function Forum({ session }) {
           </>
         ) : (
           <div className="empty-state">
-            <div className="empty-icon">&#128172;</div>
+            <div className="empty-icon">💬</div>
             <h2 className="empty-title">No channels yet</h2>
             <p className="empty-text">Create a channel to start discussing.</p>
           </div>

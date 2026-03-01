@@ -47,7 +47,7 @@ export default function Insights({ session, currentBook, members }) {
     if (!currentBook) {
       return (
         <div className="empty-state" style={{ height: '100%' }}>
-          <div className="empty-icon">&#128218;</div>
+          <div className="empty-icon">📚</div>
           <h2 className="empty-title">No book selected</h2>
           <p className="empty-text">
             Upload a book in the Reader tab to unlock AI-powered insights.

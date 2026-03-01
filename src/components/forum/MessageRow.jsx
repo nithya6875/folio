@@ -48,7 +48,7 @@ export default function MessageRow({ group, allMessages, memberName, onReply, on
               {replyTo && (
                 <div className="reply-indicator" style={{ marginBottom: '4px', padding: '4px 8px' }}>
                   <span style={{ color: 'var(--muted)', fontSize: '12px' }}>
-                    &#8617; Replying to {replyTo.author}
+                    ↩ Replying to {replyTo.author}
                   </span>
                 </div>
               )}
@@ -77,7 +77,7 @@ export default function MessageRow({ group, allMessages, memberName, onReply, on
                   className="action-btn"
                   onClick={() => onReply(message)}
                 >
-                  &#8617; Reply
+                  ↩ Reply
                 </button>
                 <div style={{ position: 'relative' }}>
                   <button
@@ -86,7 +86,7 @@ export default function MessageRow({ group, allMessages, memberName, onReply, on
                       showReactionPicker === message.id ? null : message.id
                     )}
                   >
-                    &#128522;
+                    😊
                   </button>
                   {showReactionPicker === message.id && (
                     <div

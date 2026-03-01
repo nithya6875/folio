@@ -47,7 +47,7 @@ export default function ArchivedInsights({ bookHistory }) {
                 setActiveTab('overview')
               }}
             >
-              <div className="archive-card-icon">&#128218;</div>
+              <div className="archive-card-icon">📚</div>
               <h3 className="archive-card-title">{book.title}</h3>
               {book.author && (
                 <p className="archive-card-author">by {book.author}</p>
@@ -193,7 +193,7 @@ function GuideSection({ guide }) {
       {guide.themes && guide.themes.length > 0 && (
         <div className="guide-section">
           <h3 className="guide-section-title">
-            <span>&#128218;</span> Key Themes
+            <span>📚</span> Key Themes
           </h3>
           {guide.themes.map((theme, idx) => (
             <div key={idx} className="theme-card">
@@ -212,7 +212,7 @@ function GuideSection({ guide }) {
       {guide.debates && guide.debates.length > 0 && (
         <div className="guide-section">
           <h3 className="guide-section-title">
-            <span>&#9878;&#65039;</span> Points of Debate
+            <span>⚖️</span> Points of Debate
           </h3>
           {guide.debates.map((debate, idx) => (
             <div key={idx} className="debate-card">

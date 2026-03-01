@@ -90,7 +90,7 @@ export default function DiscussionGuide({ session, currentBook }) {
             </>
           ) : (
             <>
-              <span>&#10024;</span>
+              <span>✨</span>
               Generate Discussion Guide
             </>
           )}
@@ -125,7 +125,7 @@ export default function DiscussionGuide({ session, currentBook }) {
       {guide.themes && guide.themes.length > 0 && (
         <div className="guide-section">
           <h3 className="guide-section-title">
-            <span>&#128218;</span> Key Themes
+            <span>📚</span> Key Themes
           </h3>
           {guide.themes.map((theme, idx) => (
             <div key={idx} className="theme-card">
@@ -145,7 +145,7 @@ export default function DiscussionGuide({ session, currentBook }) {
       {guide.debates && guide.debates.length > 0 && (
         <div className="guide-section">
           <h3 className="guide-section-title">
-            <span>&#9878;&#65039;</span> Points of Debate
+            <span>⚖️</span> Points of Debate
           </h3>
           {guide.debates.map((debate, idx) => (
             <div key={idx} className="debate-card">
@@ -183,7 +183,7 @@ export default function DiscussionGuide({ session, currentBook }) {
       {guide.memberSpotlights && guide.memberSpotlights.length > 0 && (
         <div className="guide-section">
           <h3 className="guide-section-title">
-            <span>&#127775;</span> Member Spotlights
+            <span>🌟</span> Member Spotlights
           </h3>
           <div className="spotlight-grid">
             {guide.memberSpotlights.map((spotlight, idx) => (
@@ -213,7 +213,7 @@ export default function DiscussionGuide({ session, currentBook }) {
       {guide.suggestedAgenda && guide.suggestedAgenda.length > 0 && (
         <div className="guide-section">
           <h3 className="guide-section-title">
-            <span>&#128197;</span> Suggested Agenda
+            <span>📅</span> Suggested Agenda
           </h3>
           <div className="agenda-timeline">
             {guide.suggestedAgenda.map((item, idx) => (

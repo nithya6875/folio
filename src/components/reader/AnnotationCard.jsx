@@ -41,7 +41,7 @@ export default function AnnotationCard({ annotation, myName, showPage, onGoToPag
         </div>
         <span className="annotation-author">{annotation.member_name}</span>
         <div className="annotation-meta">
-          {isWhisper && <span className="whisper-badge">&#129323;</span>}
+          {isWhisper && <span className="whisper-badge">🤫</span>}
           {showPage && (
             <span className="page-badge">p{annotation.page_number}</span>
           )}

@@ -83,7 +83,7 @@ export default function Nominations({ nominations, memberName, onNominate, onVot
                     className={`vote-btn ${hasVoted ? 'voted' : ''}`}
                     onClick={() => onVote(nomination.id)}
                   >
-                    &#9650;
+                    ▲
                   </button>
                   <span className="vote-count">{voteCount}</span>
                 </div>

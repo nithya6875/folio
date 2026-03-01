@@ -202,7 +202,7 @@ export default function Library({ session, currentBook, setCurrentBook, onBookCo
             </button>
           </div>
           <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <div style={{ fontSize: '48px' }}>&#128214;</div>
+            <div style={{ fontSize: '48px' }}>📖</div>
             <div>
               <h3 style={{ fontSize: '20px', marginBottom: '4px' }}>{currentBook.title}</h3>
               {currentBook.author && (

@@ -31,7 +31,7 @@ export default function MessageInput({ memberName, replyTo, onCancelReply, onSen
     <div className="message-input-container">
       {replyTo && (
         <div className="reply-indicator">
-          <span>&#8617;</span>
+          <span>↩</span>
           <span className="reply-text">
             Replying to {replyTo.author}: {replyTo.content}
           </span>

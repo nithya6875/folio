@@ -89,7 +89,7 @@ export default function BookCapsule({ session, currentBook, members }) {
           onClick={handleGenerate}
           disabled={loading}
         >
-          {loading ? 'Generating...' : '&#127942; Generate Capsule'}
+          {loading ? 'Generating...' : '🏆 Generate Capsule'}
         </button>
 
         {error && (
