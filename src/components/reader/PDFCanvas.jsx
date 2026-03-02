@@ -12,6 +12,7 @@ export default function PDFCanvas({
   const canvasRef = useRef(null)
   const textLayerRef = useRef(null)
   const renderTaskRef = useRef(null)
+  const textLayerRenderTask = useRef(null)
 
   useEffect(() => {
     if (!pdfDoc) return
@@ -21,6 +22,9 @@ export default function PDFCanvas({
     return () => {
       if (renderTaskRef.current) {
         renderTaskRef.current.cancel()
+      }
+      if (textLayerRenderTask.current) {
+        textLayerRenderTask.current.cancel()
       }
     }
   }, [pdfDoc, pageNumber, zoom, heatmapOn, annotationCount])
@@ -41,12 +45,15 @@ export default function PDFCanvas({
       containerRef.current.style.width = `${viewport.width}px`
       containerRef.current.style.height = `${viewport.height}px`
 
-      // Cancel previous render
+      // Cancel previous renders
       if (renderTaskRef.current) {
         renderTaskRef.current.cancel()
       }
+      if (textLayerRenderTask.current) {
+        textLayerRenderTask.current.cancel()
+      }
 
-      // Render PDF page
+      // Render PDF page to canvas
       renderTaskRef.current = page.render({
         canvasContext: context,
         viewport
@@ -58,29 +65,30 @@ export default function PDFCanvas({
       if (heatmapOn && annotationCount > 0) {
         const opacity = Math.min(0.4, 0.1 + annotationCount * 0.1)
         const color = annotationCount >= 3
-          ? `rgba(220, 53, 69, ${opacity})`  // Red for hot
-          : `rgba(184, 134, 11, ${opacity})` // Amber for warm
+          ? `rgba(220, 53, 69, ${opacity})`
+          : `rgba(184, 134, 11, ${opacity})`
 
         context.fillStyle = color
         context.fillRect(0, 0, canvas.width, canvas.height)
       }
 
       // Render text layer
-      const textContent = await page.getTextContent()
       const textLayer = textLayerRef.current
-
-      // Clear previous text layer
       textLayer.innerHTML = ''
       textLayer.style.width = `${viewport.width}px`
       textLayer.style.height = `${viewport.height}px`
 
-      // Use PDF.js text layer rendering
-      pdfjsLib.renderTextLayer({
+      const textContent = await page.getTextContent()
+
+      // Use PDF.js renderTextLayer
+      textLayerRenderTask.current = pdfjsLib.renderTextLayer({
         textContentSource: textContent,
         container: textLayer,
-        viewport,
+        viewport: viewport,
         textDivs: []
       })
+
+      await textLayerRenderTask.current.promise
 
     } catch (err) {
       if (err.name !== 'RenderingCancelledException') {
@@ -90,18 +98,21 @@ export default function PDFCanvas({
   }
 
   // Handle text selection
-  const handleMouseUp = useCallback((e) => {
-    // Debounce
+  const handleMouseUp = useCallback(() => {
     setTimeout(() => {
       const selection = window.getSelection()
       const text = selection.toString().trim()
 
       if (text.length >= 2) {
-        const range = selection.getRangeAt(0)
-        const rect = range.getBoundingClientRect()
-        onTextSelection(text, rect)
+        try {
+          const range = selection.getRangeAt(0)
+          const rect = range.getBoundingClientRect()
+          onTextSelection(text, rect)
+        } catch (e) {
+          // Selection might be invalid
+        }
       }
-    }, 60)
+    }, 10)
   }, [onTextSelection])
 
   useEffect(() => {

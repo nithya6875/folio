@@ -435,6 +435,7 @@ textarea.fi {
   display: block;
 }
 
+/* PDF.js Text Layer - enables text selection */
 .text-layer {
   position: absolute;
   top: 0;
@@ -442,18 +443,67 @@ textarea.fi {
   right: 0;
   bottom: 0;
   overflow: hidden;
+  opacity: 1;
+  line-height: 1;
   pointer-events: auto;
+  z-index: 2;
 }
 
-.text-layer span {
-  position: absolute;
+.text-layer span,
+.text-layer br {
   color: transparent;
+  position: absolute;
   white-space: pre;
   cursor: text;
+  transform-origin: 0% 0%;
+}
+
+.text-layer .highlight {
+  margin: -1px;
+  padding: 1px;
+  background-color: rgba(180, 0, 170, 0.4);
+  border-radius: 4px;
+}
+
+.text-layer .highlight.appended {
+  position: initial;
+}
+
+.text-layer .highlight.begin {
+  border-radius: 4px 0 0 4px;
+}
+
+.text-layer .highlight.end {
+  border-radius: 0 4px 4px 0;
+}
+
+.text-layer .highlight.middle {
+  border-radius: 0;
+}
+
+.text-layer .highlight.selected {
+  background-color: rgba(0, 100, 0, 0.4);
 }
 
 .text-layer ::selection {
-  background: rgba(45, 80, 22, 0.3);
+  background: rgba(45, 80, 22, 0.6);
+}
+
+.text-layer ::-moz-selection {
+  background: rgba(45, 80, 22, 0.6);
+}
+
+.text-layer .endOfContent {
+  display: block;
+  position: absolute;
+  inset: 100% 0 0;
+  z-index: -1;
+  cursor: default;
+  user-select: none;
+}
+
+.text-layer .endOfContent.active {
+  top: 0;
 }
 
 /* Presence Rail */
