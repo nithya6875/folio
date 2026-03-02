@@ -1,8 +1,17 @@
 import { getAvatarColor, getInitials } from '../../hooks/usePresence'
 
+const TYPE_CONFIG = {
+  highlight: { emoji: '🖍️', label: 'highlighted' },
+  quote: { emoji: '💬', label: 'saved quote' },
+  question: { emoji: '❓', label: 'asked' },
+  note: { emoji: '📝', label: 'noted' },
+  whisper: { emoji: '🤫', label: 'whispered' }
+}
+
 export default function AnnotationCard({ annotation, myName, showPage, onGoToPage }) {
   const isWhisper = annotation.is_whisper
   const isMine = annotation.member_name === myName
+  const config = TYPE_CONFIG[annotation.type] || TYPE_CONFIG.note
 
   const formatTime = (dateStr) => {
     const date = new Date(dateStr)
@@ -28,10 +37,11 @@ export default function AnnotationCard({ annotation, myName, showPage, onGoToPag
 
   return (
     <div
-      className="annotation-card"
+      className={`annotation-card ${annotation.type}`}
       onClick={handleClick}
       style={{ cursor: showPage ? 'pointer' : 'default' }}
     >
+      {/* Header with avatar and meta */}
       <div className="annotation-header">
         <div
           className="avatar annotation-avatar"
@@ -39,9 +49,11 @@ export default function AnnotationCard({ annotation, myName, showPage, onGoToPag
         >
           {getInitials(annotation.member_name)}
         </div>
-        <span className="annotation-author">{annotation.member_name}</span>
+        <div className="annotation-header-text">
+          <span className="annotation-author">{annotation.member_name}</span>
+          <span className="annotation-action"> {config.label}</span>
+        </div>
         <div className="annotation-meta">
-          {isWhisper && <span className="whisper-badge">🤫</span>}
           {showPage && (
             <span className="page-badge">p{annotation.page_number}</span>
           )}
@@ -49,11 +61,35 @@ export default function AnnotationCard({ annotation, myName, showPage, onGoToPag
         </div>
       </div>
 
-      <div className={`annotation-text ${annotation.type}`}>
-        {annotation.selected_text || '(No text selected)'}
+      {/* Type badge */}
+      <div className={`annotation-type-badge ${annotation.type}`}>
+        {config.emoji} {annotation.type}
+        {isWhisper && ' (private)'}
       </div>
 
-      {annotation.note && (
+      {/* Content based on type */}
+      {annotation.type === 'quote' ? (
+        <blockquote className="annotation-quote-text">
+          "{annotation.selected_text}"
+        </blockquote>
+      ) : annotation.type === 'question' ? (
+        <>
+          <div className="annotation-text highlight-bg">
+            {annotation.selected_text}
+          </div>
+          <div className="annotation-question">
+            <span className="question-icon">❓</span>
+            {annotation.note}
+          </div>
+        </>
+      ) : (
+        <div className={`annotation-text ${annotation.type}`}>
+          {annotation.selected_text || '(No text selected)'}
+        </div>
+      )}
+
+      {/* Note (for non-question types) */}
+      {annotation.note && annotation.type !== 'question' && (
         <div className="annotation-note">
           {annotation.note}
         </div>

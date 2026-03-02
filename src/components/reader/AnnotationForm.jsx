@@ -1,11 +1,11 @@
 import { useState } from 'react'
 
 const ANNOTATION_TYPES = [
-  { type: 'highlight', emoji: '&#128394;', label: 'Highlight' },
-  { type: 'quote', emoji: '&#128172;', label: 'Quote' },
-  { type: 'question', emoji: '&#129300;', label: 'Question' },
-  { type: 'note', emoji: '&#128221;', label: 'Note' },
-  { type: 'whisper', emoji: '&#129323;', label: 'Whisper' }
+  { type: 'highlight', emoji: '🖍️', label: 'Highlight', description: 'Mark important text' },
+  { type: 'quote', emoji: '💬', label: 'Quote', description: 'Save a memorable passage' },
+  { type: 'question', emoji: '❓', label: 'Question', description: 'Ask the club something' },
+  { type: 'note', emoji: '📝', label: 'Note', description: 'Share your analysis' },
+  { type: 'whisper', emoji: '🤫', label: 'Whisper', description: 'Private note for yourself' }
 ]
 
 export default function AnnotationForm({ initialType, selectedText, page, onSave, onClose }) {
@@ -14,8 +14,33 @@ export default function AnnotationForm({ initialType, selectedText, page, onSave
   const [text, setText] = useState(selectedText)
   const [saving, setSaving] = useState(false)
 
+  const currentType = ANNOTATION_TYPES.find(t => t.type === type)
+
+  // Validation based on type
+  const isValid = () => {
+    const hasText = selectedText || text.trim()
+    if (!hasText) return false
+
+    switch (type) {
+      case 'highlight':
+        return true // No note required
+      case 'quote':
+        return true // No note required
+      case 'question':
+        return note.trim().length > 0 // Question text required
+      case 'note':
+        return note.trim().length > 0 // Analysis required
+      case 'whisper':
+        return true // Note optional
+      default:
+        return true
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (!isValid()) return
+
     setSaving(true)
 
     await onSave({
@@ -28,11 +53,47 @@ export default function AnnotationForm({ initialType, selectedText, page, onSave
     setSaving(false)
   }
 
+  const getNoteLabel = () => {
+    switch (type) {
+      case 'highlight':
+        return 'Add a comment (optional)'
+      case 'quote':
+        return 'Why does this resonate? (optional)'
+      case 'question':
+        return 'Your question for the club'
+      case 'note':
+        return 'Your analysis'
+      case 'whisper':
+        return 'Your private thoughts (optional)'
+      default:
+        return 'Note'
+    }
+  }
+
+  const getNotePlaceholder = () => {
+    switch (type) {
+      case 'highlight':
+        return 'Quick thought about this passage...'
+      case 'quote':
+        return 'This stood out because...'
+      case 'question':
+        return 'What do you all think about...?'
+      case 'note':
+        return 'I noticed that... / This connects to... / The author is suggesting...'
+      case 'whisper':
+        return 'A thought just for you...'
+      default:
+        return 'Add your thoughts...'
+    }
+  }
+
+  const isNoteRequired = type === 'question' || type === 'note'
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
-          <h2 className="modal-title">Add Annotation</h2>
+          <h2 className="modal-title">Add {currentType?.label || 'Annotation'}</h2>
           <button className="modal-close" onClick={onClose}>
             &times;
           </button>
@@ -40,6 +101,7 @@ export default function AnnotationForm({ initialType, selectedText, page, onSave
 
         <form onSubmit={handleSubmit}>
           <div className="modal-body">
+            {/* Type selector */}
             <div className="type-selector">
               {ANNOTATION_TYPES.map(({ type: t, emoji, label }) => (
                 <button
@@ -49,20 +111,21 @@ export default function AnnotationForm({ initialType, selectedText, page, onSave
                   onClick={() => setType(t)}
                   title={label}
                 >
-                  <span dangerouslySetInnerHTML={{ __html: emoji }} />
+                  <span>{emoji}</span>
                 </button>
               ))}
             </div>
 
-            {type === 'whisper' && (
-              <p className="text-muted mb-3" style={{ fontSize: '13px' }}>
-                🤫 Whispers are private — only you can see them.
-              </p>
-            )}
+            {/* Type description */}
+            <p className="type-description">
+              {currentType?.emoji} {currentType?.description}
+              {type === 'whisper' && ' — only you can see this'}
+            </p>
 
+            {/* Selected text preview */}
             {selectedText ? (
               <div className={`selected-text-preview ${type}`}>
-                "{selectedText}"
+                {type === 'quote' ? `"${selectedText}"` : selectedText}
               </div>
             ) : (
               <div className="form-group mb-3">
@@ -77,14 +140,18 @@ export default function AnnotationForm({ initialType, selectedText, page, onSave
               </div>
             )}
 
+            {/* Note field - different based on type */}
             <div className="form-group">
-              <label className="form-label">Note (optional)</label>
+              <label className="form-label">
+                {getNoteLabel()}
+                {isNoteRequired && <span className="required-star"> *</span>}
+              </label>
               <textarea
                 className="fi"
-                placeholder="Add your thoughts..."
+                placeholder={getNotePlaceholder()}
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                rows={4}
+                rows={type === 'highlight' ? 2 : 4}
               />
             </div>
           </div>
@@ -96,9 +163,9 @@ export default function AnnotationForm({ initialType, selectedText, page, onSave
             <button
               type="submit"
               className="fb"
-              disabled={saving || (!selectedText && !text.trim())}
+              disabled={saving || !isValid()}
             >
-              {saving ? 'Saving...' : 'Save Annotation'}
+              {saving ? 'Saving...' : `Save ${currentType?.label || 'Annotation'}`}
             </button>
           </div>
         </form>

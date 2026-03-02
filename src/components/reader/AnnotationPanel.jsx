@@ -1,10 +1,18 @@
 import { useState } from 'react'
 import AnnotationCard from './AnnotationCard'
 
-const FILTERS = [
+const SCOPE_FILTERS = [
   { id: 'page', label: 'This Page' },
   { id: 'chapter', label: 'This Chapter' },
   { id: 'all', label: 'All' }
+]
+
+const TYPE_FILTERS = [
+  { id: 'all', label: 'All', emoji: '📚' },
+  { id: 'question', label: 'Questions', emoji: '❓' },
+  { id: 'quote', label: 'Quotes', emoji: '💬' },
+  { id: 'highlight', label: 'Highlights', emoji: '🖍️' },
+  { id: 'note', label: 'Notes', emoji: '📝' }
 ]
 
 export default function AnnotationPanel({
@@ -15,62 +23,96 @@ export default function AnnotationPanel({
   onAddNote,
   onGoToPage
 }) {
-  const [filter, setFilter] = useState('page')
+  const [scopeFilter, setScopeFilter] = useState('page')
+  const [typeFilter, setTypeFilter] = useState('all')
 
   if (!open) return null
 
-  // Filter annotations based on selected filter
+  // Filter annotations based on selected filters
   const filteredAnnotations = annotations.filter(a => {
     // Always filter out other people's whispers
     if (a.is_whisper && a.member_name !== myName) return false
 
-    switch (filter) {
+    // Scope filter
+    let passesScope = true
+    switch (scopeFilter) {
       case 'page':
-        return a.page_number === currentPage
+        passesScope = a.page_number === currentPage
+        break
       case 'chapter':
-        // Chapter = within 10 pages
-        return Math.abs(a.page_number - currentPage) <= 10
+        passesScope = Math.abs(a.page_number - currentPage) <= 10
+        break
       case 'all':
       default:
-        return true
+        passesScope = true
     }
+
+    // Type filter
+    let passesType = true
+    if (typeFilter !== 'all') {
+      passesType = a.type === typeFilter
+    }
+
+    return passesScope && passesType
   })
 
   // Sort by page number, then by date
   const sortedAnnotations = [...filteredAnnotations].sort((a, b) => {
-    if (filter === 'page') {
-      // For current page, sort by newest first
+    if (scopeFilter === 'page') {
       return new Date(b.created_at) - new Date(a.created_at)
     }
-    // For chapter/all, sort by page number
     if (a.page_number !== b.page_number) {
       return a.page_number - b.page_number
     }
     return new Date(b.created_at) - new Date(a.created_at)
   })
 
+  // Count questions for badge
+  const questionCount = annotations.filter(a =>
+    a.type === 'question' && (!a.is_whisper || a.member_name === myName)
+  ).length
+
   return (
     <aside className="annotation-panel">
       <div className="panel-header">
         <h2 className="panel-title">Annotations</h2>
         <button className="fo panel-add-btn" onClick={onAddNote}>
-          + Add note
+          + Add
         </button>
       </div>
 
-      {/* Filter tabs */}
+      {/* Scope filter tabs */}
       <div className="filter-tabs">
-        {FILTERS.map(f => (
+        {SCOPE_FILTERS.map(f => (
           <button
             key={f.id}
-            className={`filter-tab ${filter === f.id ? 'active' : ''}`}
-            onClick={() => setFilter(f.id)}
+            className={`filter-tab ${scopeFilter === f.id ? 'active' : ''}`}
+            onClick={() => setScopeFilter(f.id)}
           >
             {f.label}
             {f.id === 'page' && (
               <span className="filter-count">
-                {annotations.filter(a => a.page_number === currentPage && (!a.is_whisper || a.member_name === myName)).length}
+                {annotations.filter(a =>
+                  a.page_number === currentPage &&
+                  (!a.is_whisper || a.member_name === myName)
+                ).length}
               </span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Type filter pills */}
+      <div className="type-filter-row">
+        {TYPE_FILTERS.map(f => (
+          <button
+            key={f.id}
+            className={`type-filter-pill ${typeFilter === f.id ? 'active' : ''}`}
+            onClick={() => setTypeFilter(f.id)}
+          >
+            {f.emoji}
+            {f.id === 'question' && questionCount > 0 && (
+              <span className="type-filter-count">{questionCount}</span>
             )}
           </button>
         ))}
@@ -84,7 +126,7 @@ export default function AnnotationPanel({
                 key={annotation.id}
                 annotation={annotation}
                 myName={myName}
-                showPage={filter !== 'page'}
+                showPage={scopeFilter !== 'page'}
                 onGoToPage={onGoToPage}
               />
             ))}
@@ -92,9 +134,14 @@ export default function AnnotationPanel({
         ) : (
           <div className="empty-state" style={{ padding: '40px 20px' }}>
             <p className="text-muted">
-              {filter === 'page' && 'No annotations on this page.'}
-              {filter === 'chapter' && 'No annotations in this chapter.'}
-              {filter === 'all' && 'No annotations yet.'}
+              {typeFilter !== 'all'
+                ? `No ${typeFilter}s ${scopeFilter === 'page' ? 'on this page' : scopeFilter === 'chapter' ? 'in this chapter' : 'yet'}.`
+                : scopeFilter === 'page'
+                  ? 'No annotations on this page.'
+                  : scopeFilter === 'chapter'
+                    ? 'No annotations in this chapter.'
+                    : 'No annotations yet.'
+              }
             </p>
             <p className="text-muted" style={{ fontSize: '14px', marginTop: '8px' }}>
               Select text in the PDF to add highlights, quotes, or notes.

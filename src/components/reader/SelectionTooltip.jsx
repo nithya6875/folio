@@ -1,11 +1,11 @@
 import { useEffect, useRef } from 'react'
 
 const ANNOTATION_TYPES = [
-  { type: 'highlight', emoji: '&#128394;', label: 'Highlight' },
-  { type: 'quote', emoji: '&#128172;', label: 'Quote' },
-  { type: 'question', emoji: '&#129300;', label: 'Question' },
-  { type: 'note', emoji: '&#128221;', label: 'Note' },
-  { type: 'whisper', emoji: '&#129323;', label: 'Whisper' }
+  { type: 'highlight', emoji: '🖍️', label: 'Highlight' },
+  { type: 'quote', emoji: '💬', label: 'Quote' },
+  { type: 'question', emoji: '❓', label: 'Question' },
+  { type: 'note', emoji: '📝', label: 'Note' },
+  { type: 'whisper', emoji: '🤫', label: 'Whisper' }
 ]
 
 export default function SelectionTooltip({ position, onSelect, onClose }) {
@@ -48,8 +48,9 @@ export default function SelectionTooltip({ position, onSelect, onClose }) {
           className="tooltip-btn"
           onClick={() => onSelect(type)}
           title={label}
-          dangerouslySetInnerHTML={{ __html: emoji }}
-        />
+        >
+          {emoji}
+        </button>
       ))}
     </div>
   )
