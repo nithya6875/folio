@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useClub } from './hooks/useClub'
 import { supabase } from './lib/supabase'
+import './lib/seedData' // Makes seedEngagement() available in console
 import LoginScreen from './components/LoginScreen'
 import Header from './components/Header'
 import PDFReader from './components/reader/PDFReader'
